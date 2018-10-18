@@ -7,7 +7,7 @@ IndustryModel.getIndustryList = () => {
         const sql = 'SELECT * FROM Industry';
         connection.query(sql, (err, results, fields) => {                
             if(err) reject(err);
-            if(results.length){
+            if(results.length){                
                 resolve({
                     status: 'SUCCESS',
                     result: results

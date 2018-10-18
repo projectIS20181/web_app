@@ -4,7 +4,7 @@ var IndustryController = {};
 IndustryController.getIndustryList = () => {
     return IndustryModel.getIndustryList().then(value => {
         if(value.status == 'SUCCESS'){
-            return value.results;
+            return value.result;
         }else{
             return value.message;
         }
