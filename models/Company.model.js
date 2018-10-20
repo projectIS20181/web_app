@@ -12,7 +12,7 @@ CompanyModel.addNewCompany = (company) => {
         }
         let insertObj = [
             company.name,
-            company.totalEmployee || 0,
+            company.total_employee || 0,
             company.intro || '',
             company.logo || '',
             company.banner || '',
@@ -39,25 +39,16 @@ CompanyModel.addNewCompany = (company) => {
 CompanyModel.getById = (companyId) => {
     return new Promise((resolve, reject) => {
         if (!companyId){
-            reject({
-                status: 'FAILED',
-                message: 'companyId must not be NULL!'
-            });
+            resolve(false);
         }
         var sql = 'SELECT * FROM Company WHERE company_id = ? ';
         
         connection.query(sql, [companyId], (err, results, fields) => {                
             if(err) reject(err);
             if(results.length){
-                resolve({
-                    status: 'SUCCESS',
-                    result: results[0]
-                });
+                resolve(results[0]);
             }else{
-                reject({
-                    status: 'FAILED',
-                    message: 'Cannot get Company id'
-                });
+                resolve(false);
             }
         })
     });

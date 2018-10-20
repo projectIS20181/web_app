@@ -36,4 +36,9 @@ module.exports.DELETED_RECRUITMENT = {
     NO: 0, //default
     YES: 1
 }
+module.exports.GENDER_REQUIREMENT = {
+    MALE: 0,
+    FEMALE: 1,
+    BOTH: 2
+}
 // ====== END RECRUITMENT ======

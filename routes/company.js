@@ -5,13 +5,8 @@ var CompanyController = require('../controllers/Company.controller');
 
 router.get('/get_by_id/:id', function(req, res, next) {
     let id = req.params.id;
-    CompanyController.getById(id).then(values => {
-        let company = values[0];
-        let companyUsers = values[1]
-        res.json({
-            company: company,
-            company_user: companyUsers
-        });
+    CompanyController.getById(id).then(result => {
+        res.json(result);
     }).catch(err => {console.log(err)});
 });
 

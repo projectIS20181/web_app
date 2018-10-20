@@ -11,8 +11,17 @@ router.get('/get_by_industry_id/:id', function(req, res, next) {
     let offset = req.query.offset || -1;
     
     RecruitmentController.getByIndustryId(id, limit, offset).then(recruitments => {
-        res.json({results: recruitments});
+        res.json(recruitments);
     }).catch(err => {throw err;});
 });
+
+router.post('/add_new_recuitment', function(req, res, next) {
+    res.json({result: req.body});
+    let recruitment = req.body;
+    RecruitmentController.addNewRecruitment(recruitment).then(result => {
+        res.json(result)
+    });
+});
+
 
 module.exports = router;

@@ -13,7 +13,7 @@ UserModel.addNewUser = (user) => {
             });
         }
         let userArr = [
-            user.userName, 
+            user.user_name, 
             user.email, 
             md5(user.password), 
             user.role
@@ -38,20 +38,20 @@ UserModel.addNewUser = (user) => {
 
 UserModel.addNewCandidate = (candidate) => {
     return new Promise((resolve, reject) => {
-        if(!candidate.userIdFk) {
+        if(!candidate.user_id_fk) {
             reject({
                 status: 'FAILED',
                 message: 'User Id Foreign Key must not be NULL!'
             });
         }
-        var candidateArr = [candidate.userIdFk];
+        var candidateArr = [candidate.user_id_fk];
         var fields = 'user_id_fk, ';
-        if(candidate.firstName) 
+        if(candidate.first_name) 
             fields += 'first_name, ';
-            candidateArr.push(candidate.firstName);
-        if(candidate.lastName)
+            candidateArr.push(candidate.first_name);
+        if(candidate.last_name)
             fields += 'last_name, ';
-            candidateArr.push(candidate.lastName);
+            candidateArr.push(candidate.last_name);
         if(candidate.gender)
             fields += 'gender, ';
             candidateArr.push(candidate.gender);
@@ -86,20 +86,20 @@ UserModel.addNewCandidate = (candidate) => {
 
 UserModel.addNewCompanyUser = (companyUser) => {
     return new Promise((resolve, reject) => {
-        if(!companyUser.userIdFk || !companyUser.companyIdFk) {
+        if(!companyUser.user_id_fk || !companyUser.company_id_fk) {
             reject({
                 status: 'FAILED',
                 message: 'UserIdFk and CompanyIdFk must not be NULL!'
             });
         }
-        var companyUserArr = [companyUser.companyIdFk, companyUser.userIdFk]
+        var companyUserArr = [companyUser.company_id_fk, companyUser.user_id_fk]
         var fields = 'company_id_fk, user_id_fk, ';
-        if(companyUser.firstName) 
+        if(companyUser.first_name) 
             fields += 'first_name, ';
-            companyUserArr.push(companyUser.firstName);
-        if(companyUser.lastName)
+            companyUserArr.push(companyUser.first_name);
+        if(companyUser.last_name)
             fields += 'last_name, ';
-            companyUserArr.push(companyUser.lastName);
+            companyUserArr.push(companyUser.last_name);
         if(companyUser.address)
             fields += 'address, ';
             companyUserArr.push(companyUser.gender);
@@ -117,7 +117,7 @@ UserModel.addNewCompanyUser = (companyUser) => {
             if(result.affectedRows){
                 resolve({
                     status: 'SUCCESS',
-                    companyUserId: result.insertId
+                    company_user_id: result.insertId
                 });
             }else{
                 reject({
@@ -132,25 +132,16 @@ UserModel.addNewCompanyUser = (companyUser) => {
 UserModel.getCompanyUserByCompanyId = (companyIdFk) => {
     return new Promise((resolve, reject) => {
         if (!companyIdFk){
-            resolve({
-                status: 'FAILED',
-                message: 'companyIdFk must not be NULL!'
-            });
+            resolve(false);
         }
         var sql = 'SELECT * FROM Company_user WHERE company_id_fk = ? ';
         
         connection.query(sql, [companyIdFk], (err, results, fields) => {                
             if(err) reject(err);
             if(results.length){
-                resolve({
-                    status: 'SUCCESS',
-                    result: results
-                });
+                resolve(results);
             }else{
-                resolve({
-                    status: 'FAILED',
-                    message: 'Cannot get companyIdFk'
-                });
+                resolve(false);
             }
         })
     });

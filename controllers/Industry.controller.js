@@ -2,13 +2,19 @@ var IndustryModel = require('../models/Industry.model');
 
 var IndustryController = {};
 IndustryController.getIndustryList = () => {
-    return IndustryModel.getIndustryList().then(value => {
-        if(value.status == 'SUCCESS'){
-            return value.result;
+    return IndustryModel.getIndustryList().then(results => { 
+        if(!results){
+            return {
+                status: 'FAILED',
+                message: 'Cannot get Industries'
+            };
         }else{
-            return value.message;
+            return {
+                status: 'SUCCESS',
+                results: results
+            };
         }
-    }).catch(err => {throw err});
+    }).catch(err => {console.log(err)});
 }
 
 module.exports = IndustryController;
