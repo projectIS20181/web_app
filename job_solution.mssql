@@ -1,0 +1,432 @@
+-- phpMyAdmin SQL Dump
+-- version 4.8.3
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost
+-- Generation Time: Oct 24, 2018 at 06:11 AM
+-- Server version: 10.1.36-MariaDB
+-- PHP Version: 5.6.38
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `job_solution`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Candidate`
+--
+
+CREATE TABLE `Candidate` (
+  `candidate_id` int(11) NOT NULL,
+  `user_id_fk` int(11) NOT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `gender` tinyint(5) DEFAULT '0',
+  `birthday` date DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `career_info_id_fk` int(11) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Candidate`
+--
+
+INSERT INTO `Candidate` (`candidate_id`, `user_id_fk`, `first_name`, `last_name`, `gender`, `birthday`, `phone`, `address`, `career_info_id_fk`) VALUES
+(3, 2, 'Praesent elementum', 'Praesent elementum', 0, '2018-10-24', '09797901231', 'Praesent elementumPraesent elementumPraesent elementum', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Candidate_recruitment`
+--
+
+CREATE TABLE `Candidate_recruitment` (
+  `candidate_recruitment_id` int(11) NOT NULL,
+  `candidate_id_fk` int(11) NOT NULL,
+  `recruitment_id_fk` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Career_info`
+--
+
+CREATE TABLE `Career_info` (
+  `career_info_id` int(11) NOT NULL,
+  `industry_id_fk` int(11) NOT NULL,
+  `career_goal` text NOT NULL,
+  `min_salary` float NOT NULL,
+  `max_salary` float NOT NULL,
+  `salary_type` tinyint(10) NOT NULL,
+  `job_type` tinyint(10) NOT NULL COMMENT 'Full, part, intern, contract',
+  `position` varchar(255) NOT NULL,
+  `experience` tinyint(10) NOT NULL COMMENT 'by year',
+  `degree` tinyint(10) NOT NULL COMMENT 'highschool, college...',
+  `foreign_lang` tinyint(10) NOT NULL,
+  `level_foreign_lang` tinyint(10) NOT NULL,
+  `resume_link` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='asdfa';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Company`
+--
+
+CREATE TABLE `Company` (
+  `company_id` int(11) NOT NULL,
+  `company_name` varchar(255) NOT NULL,
+  `total_employee` varchar(255) NOT NULL COMMENT 'from-to',
+  `intro` text NOT NULL,
+  `logo` varchar(255) NOT NULL,
+  `banner` varchar(255) NOT NULL,
+  `location` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Company`
+--
+
+INSERT INTO `Company` (`company_id`, `company_name`, `total_employee`, `intro`, `logo`, `banner`, `location`) VALUES
+(1, 'Company A', '100-1000', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sollicitudin imperdiet risus, at dignissim libero imperdiet dapibus. Proin luctus odio posuere fringilla alique', '', '', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Company_candidate`
+--
+
+CREATE TABLE `Company_candidate` (
+  `company_candidate_id` int(11) NOT NULL,
+  `candidate_id_fk` int(11) NOT NULL,
+  `company_id_fk` int(11) NOT NULL,
+  `type` tinyint(10) NOT NULL COMMENT 'who follow whom'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Company_candidate`
+--
+
+INSERT INTO `Company_candidate` (`company_candidate_id`, `candidate_id_fk`, `company_id_fk`, `type`) VALUES
+(1, 3, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Company_user`
+--
+
+CREATE TABLE `Company_user` (
+  `company_user_id` int(11) NOT NULL,
+  `company_id_fk` int(11) NOT NULL,
+  `user_id_fk` int(11) NOT NULL,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `position` varchar(255) NOT NULL COMMENT 'Vi tri cong viec'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Company_user`
+--
+
+INSERT INTO `Company_user` (`company_user_id`, `company_id_fk`, `user_id_fk`, `first_name`, `last_name`, `address`, `phone`, `position`) VALUES
+(1, 1, 1, 'Curabitur tincidunt ', 'Curabitur tincidunt ', 'Curabitur tincidunt Curabitur tincidunt Curabitur tincidunt ', '0192121122', 'Curabitur tincidunt ');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Industry`
+--
+
+CREATE TABLE `Industry` (
+  `industry_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Industry`
+--
+
+INSERT INTO `Industry` (`industry_id`, `name`) VALUES
+(1, 'Tiếp thị / Marketing'),
+(2, 'Bán lẻ / Bán sỉ'),
+(3, 'Bán hàng / Kinh doanh'),
+(4, 'Tiếp thị trực tuyến'),
+(5, 'Dược phẩm'),
+(6, 'Y tế / Chăm sóc sức khỏe'),
+(7, 'Tư vấn'),
+(8, 'Dịch vụ khách hàng'),
+(9, 'Luật / Pháp lý'),
+(10, 'Bưu chính viễn thông'),
+(11, 'Giáo dục / Đào tạo'),
+(12, 'An Ninh / Bảo Vệ'),
+(13, 'Giáo dục / Đào tạo'),
+(14, 'Hành chính / Thư ký'),
+(15, 'Quản lý điều hành'),
+(16, 'Nhân sự'),
+(17, 'Biên phiên dịch'),
+(18, 'Kế toán / Kiểm toán'),
+(19, 'Ngân hàng'),
+(20, 'Bảo hiểm'),
+(21, 'CNTT - Phần mềm'),
+(22, 'CNTT - Phần cứng / Mạng');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Recruitment`
+--
+
+CREATE TABLE `Recruitment` (
+  `recruitment_id` int(11) NOT NULL,
+  `company_id_fk` int(11) NOT NULL,
+  `industry_id_fk` int(11) NOT NULL COMMENT 'Ngành nghề',
+  `work_id` varchar(255) NOT NULL COMMENT 'Mã công việc',
+  `work_name` varchar(255) NOT NULL,
+  `position` varchar(255) NOT NULL COMMENT 'Vị trí tuyển dụng',
+  `description` varchar(255) NOT NULL COMMENT 'Mô Tả Công Việc ',
+  `requirement` varchar(255) NOT NULL COMMENT 'Yêu cầu công việc',
+  `location` varchar(255) NOT NULL,
+  `min_salary` float NOT NULL,
+  `max_salary` float NOT NULL,
+  `min_age` int(11) NOT NULL,
+  `max_age` int(11) NOT NULL,
+  `type_salary` tinyint(10) NOT NULL COMMENT 'Xem constant.js',
+  `type_candidate` tinyint(10) NOT NULL COMMENT 'Xem constant.js',
+  `gender_requirement` tinyint(10) NOT NULL,
+  `deadline` date NOT NULL COMMENT 'Hạn nhận hồ sơ',
+  `job_tags` text NOT NULL,
+  `type_post` tinyint(10) NOT NULL COMMENT 'Xem constant.js',
+  `deleted` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Xem constant.js'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Recruitment`
+--
+
+INSERT INTO `Recruitment` (`recruitment_id`, `company_id_fk`, `industry_id_fk`, `work_id`, `work_name`, `position`, `description`, `requirement`, `location`, `min_salary`, `max_salary`, `min_age`, `max_age`, `type_salary`, `type_candidate`, `gender_requirement`, `deadline`, `job_tags`, `type_post`, `deleted`) VALUES
+(1, 1, 1, 'Lorem ipsum dolor', '', 'Lorem ipsum dolor', 'Lorem ipsum dolor', 'Lorem ipsum dolor', 'Lorem ipsum dolor', 100, 300, 0, 0, 2, 1, 0, '2018-10-31', '', 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `User`
+--
+
+CREATE TABLE `User` (
+  `user_id` int(11) NOT NULL,
+  `user_name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` tinyint(10) NOT NULL,
+  `created_date` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `User`
+--
+
+INSERT INTO `User` (`user_id`, `user_name`, `email`, `password`, `role`, `created_date`) VALUES
+(1, 'user0', 'hahah@gmail.com', '202cb962ac59075b964b07152d234b70', 2, 1539833924),
+(2, 'candidate', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', 1, 1540303230);
+
+--
+-- Triggers `User`
+--
+DELIMITER $$
+CREATE TRIGGER `User_created_date` BEFORE INSERT ON `User` FOR EACH ROW BEGIN
+ SET NEW.created_date =  UNIX_TIMESTAMP();
+END
+$$
+DELIMITER ;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `Candidate`
+--
+ALTER TABLE `Candidate`
+  ADD PRIMARY KEY (`candidate_id`),
+  ADD KEY `Candidate_user_id_fk` (`user_id_fk`);
+
+--
+-- Indexes for table `Candidate_recruitment`
+--
+ALTER TABLE `Candidate_recruitment`
+  ADD PRIMARY KEY (`candidate_recruitment_id`),
+  ADD KEY `Candidate_recruitment_candidate_id_fk` (`candidate_id_fk`),
+  ADD KEY `Candidate_recruitment_recruitment_id_fk` (`recruitment_id_fk`);
+
+--
+-- Indexes for table `Career_info`
+--
+ALTER TABLE `Career_info`
+  ADD PRIMARY KEY (`career_info_id`),
+  ADD KEY `Industry_career_info_industry_id_fk` (`industry_id_fk`);
+
+--
+-- Indexes for table `Company`
+--
+ALTER TABLE `Company`
+  ADD PRIMARY KEY (`company_id`);
+
+--
+-- Indexes for table `Company_candidate`
+--
+ALTER TABLE `Company_candidate`
+  ADD PRIMARY KEY (`company_candidate_id`),
+  ADD KEY `Candidate_candidate_id_fk` (`candidate_id_fk`),
+  ADD KEY `Company_company_id_fk` (`company_id_fk`);
+
+--
+-- Indexes for table `Company_user`
+--
+ALTER TABLE `Company_user`
+  ADD PRIMARY KEY (`company_user_id`),
+  ADD KEY `Company_company_user_id_fk` (`company_id_fk`),
+  ADD KEY `user_company_user_id_fk` (`user_id_fk`);
+
+--
+-- Indexes for table `Industry`
+--
+ALTER TABLE `Industry`
+  ADD PRIMARY KEY (`industry_id`);
+
+--
+-- Indexes for table `Recruitment`
+--
+ALTER TABLE `Recruitment`
+  ADD PRIMARY KEY (`recruitment_id`),
+  ADD KEY `Company_recruitment_company_id_fk` (`company_id_fk`),
+  ADD KEY `Recruitment_industry_id_fk` (`industry_id_fk`);
+
+--
+-- Indexes for table `User`
+--
+ALTER TABLE `User`
+  ADD PRIMARY KEY (`user_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `Candidate`
+--
+ALTER TABLE `Candidate`
+  MODIFY `candidate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `Candidate_recruitment`
+--
+ALTER TABLE `Candidate_recruitment`
+  MODIFY `candidate_recruitment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Career_info`
+--
+ALTER TABLE `Career_info`
+  MODIFY `career_info_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `Company`
+--
+ALTER TABLE `Company`
+  MODIFY `company_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `Company_candidate`
+--
+ALTER TABLE `Company_candidate`
+  MODIFY `company_candidate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `Company_user`
+--
+ALTER TABLE `Company_user`
+  MODIFY `company_user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `Industry`
+--
+ALTER TABLE `Industry`
+  MODIFY `industry_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+
+--
+-- AUTO_INCREMENT for table `Recruitment`
+--
+ALTER TABLE `Recruitment`
+  MODIFY `recruitment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `User`
+--
+ALTER TABLE `User`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `Candidate`
+--
+ALTER TABLE `Candidate`
+  ADD CONSTRAINT `Candidate_user_id_fk` FOREIGN KEY (`user_id_fk`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `Candidate_recruitment`
+--
+ALTER TABLE `Candidate_recruitment`
+  ADD CONSTRAINT `Candidate_recruitment_candidate_id_fk` FOREIGN KEY (`candidate_id_fk`) REFERENCES `Candidate` (`candidate_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `Candidate_recruitment_recruitment_id_fk` FOREIGN KEY (`recruitment_id_fk`) REFERENCES `Recruitment` (`recruitment_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `Career_info`
+--
+ALTER TABLE `Career_info`
+  ADD CONSTRAINT `Industry_career_info_industry_id_fk` FOREIGN KEY (`industry_id_fk`) REFERENCES `Industry` (`industry_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `Company_candidate`
+--
+ALTER TABLE `Company_candidate`
+  ADD CONSTRAINT `Candidate_candidate_id_fk` FOREIGN KEY (`candidate_id_fk`) REFERENCES `Candidate` (`candidate_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `Company_company_id_fk` FOREIGN KEY (`company_id_fk`) REFERENCES `Company` (`company_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `Company_user`
+--
+ALTER TABLE `Company_user`
+  ADD CONSTRAINT `Company_company_user_id_fk` FOREIGN KEY (`company_id_fk`) REFERENCES `Company` (`company_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `user_company_user_id_fk` FOREIGN KEY (`user_id_fk`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `Recruitment`
+--
+ALTER TABLE `Recruitment`
+  ADD CONSTRAINT `Company_recruitment_company_id_fk` FOREIGN KEY (`company_id_fk`) REFERENCES `Company` (`company_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `Recruitment_industry_id_fk` FOREIGN KEY (`industry_id_fk`) REFERENCES `Industry` (`industry_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
