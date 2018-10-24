@@ -5,10 +5,10 @@ var CompanyController = {};
 
 CompanyController.getById = (companyId) => {
     if(!companyId){
-        return {
+        return Promise.resolve({
             status: 'FAILED',
             message: 'Company Id must not be NULL!'
-        };
+        });
     }
 
     const getCompany = (id) => {

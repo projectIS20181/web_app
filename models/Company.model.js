@@ -1,4 +1,5 @@
 var connection = require('./Mysql.connection');
+const COMPANY_CANDIDATE = require('../configs/constant').COMPANY_CANDIDATE;
 
 var CompanyModel = {}
 
@@ -53,5 +54,6 @@ CompanyModel.getById = (companyId) => {
         })
     });
 }
+
 
 module.exports = CompanyModel;

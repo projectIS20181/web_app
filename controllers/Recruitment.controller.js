@@ -4,7 +4,7 @@ var RecruitmentController = {};
 
 RecruitmentController.getByIndustryId = (industryIdFk, limit = -1, offset = -1) => {
     if (!industryIdFk){
-        return({
+        return Promise.resolve({
             status: 'FAILED',
             message: 'industry_id_fk must not be NULL!'
         });
@@ -26,7 +26,7 @@ RecruitmentController.getByIndustryId = (industryIdFk, limit = -1, offset = -1) 
 
 RecruitmentController.addNewRecruitment = (recruitment) => {
     if (!recruitment.company_id_fk || !recruitment.industry_id_fk){
-        return({
+        return Promise.resolve({
             status: 'FAILED',
             message: 'company_id_fk and industry_id_fk must not be null.'
         }); 

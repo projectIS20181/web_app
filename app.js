@@ -9,6 +9,7 @@ var usersRouter = require('./routes/users');
 var industryRouter = require('./routes/industry');
 var recruitmentRouter = require('./routes/recruitment');
 var companyRouter = require('./routes/company');
+var comcanRouter = require('./routes/comcan');
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use('/users', usersRouter);
 app.use('/industry', industryRouter);
 app.use('/recruitment', recruitmentRouter);
 app.use('/company', companyRouter);
+app.use('/comcan', comcanRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

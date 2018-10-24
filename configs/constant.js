@@ -5,6 +5,15 @@ module.exports.USER_ROLE = {
 }
 // ====== END USER ======
 
+// ====== COMPANY CANDIDATE ======
+module.exports.COMPANY_CANDIDATE = {
+    UNFOLLOW: 0,
+    CAN_FOLLOW_COM: 1,
+    COM_FOLLOW_CAN: 2,
+    FOLLOW_EACHOTHER: 3
+}
+
+// ====== END COMPANY CANDIDATE ======
 
 // ====== CANDIDATE ======
 module.exports.GENDER = {

@@ -2,6 +2,7 @@ var connection = require('./Mysql.connection');
 var md5 = require('md5');
 const GENDER = require('../configs/constant').GENDER;
 
+
 var UserModel = {};
 
 UserModel.addNewUser = (user) => {
@@ -146,6 +147,65 @@ UserModel.getCompanyUserByCompanyId = (companyIdFk) => {
         })
     });
 }
+
+
+UserModel.candidateSaveRecruitment = (candidateId, recruitmentId) => {
+    return new Promise((resolve, reject) => {
+        if (!candidateId || !recruitmentId){
+            resolve(false);
+        }
+        insertArr = [[candidateId, recruitmentId]];
+        var sql = 'INSERT INTO Candidate_recruitment (candidate_id_fk, recruitment_id_fk) VALUES ? ';
+    
+        connection.query(sql, [insertArr], (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.affectedRows){
+                resolve(result.insertId);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
+
+UserModel.getRecruitmentByCandidateId = (candidateId, limit = -1, offset = -1) => {
+    return new Promise((resolve, reject) => {
+        if (!candidateId){
+            resolve(false);
+        }
+        var sql = 'SELECT Recruitment.* FROM Recruitment, Candidate_recruitment WHERE recruitment_id_fk = recruitment_id AND candidate_id_fk = ? ';
+        if(limit > -1 && offset > -1) {
+            sql += 'LIMIT ' + limit + ' OFFSET ' + offset;
+        }
+        connection.query(sql, [candidateId], (err, results, fields) => {                
+            if(err) reject(err);
+            if(results && results.length){
+                resolve(results);
+            }else{
+                resolve(false);
+            }
+        })
+    });
+}
+
+UserModel.deleteRecByCandidate = (candidateId, recruitmentId) => {
+    return new Promise((resolve, reject) => {
+        if (!candidateId || !recruitmentId){
+            resolve(false);
+        }
+        
+        var sql = 'DELETE FROM Candidate_recruitment WHERE candidate_id_fk = ? AND recruitment_id_fk = ? ';
+        connection.query(sql, [candidateId, recruitmentId], (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.affectedRows){
+                resolve(true);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
+
 
 
 module.exports = UserModel;
