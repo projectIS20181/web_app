@@ -1,17 +1,14 @@
 var connection = require('./Mysql.connection');
 var md5 = require('md5');
 const GENDER = require('../configs/constant').GENDER;
-
+const USER_ROLE = require('../configs/constant').USER_ROLE;
 
 var UserModel = {};
 
 UserModel.addNewUser = (user) => {
     return new Promise((resolve, reject) => {
-        if (!user.userName || !user.password || !user.role){
-            reject({
-                status: 'FAILED',
-                message: 'User Name, Password and Role must not be NULL!'
-            });
+        if ((!user.email && !user.user_name) || !user.password || !user.role){
+            resolve(false);
         }
         let userArr = [
             user.user_name, 
@@ -20,18 +17,13 @@ UserModel.addNewUser = (user) => {
             user.role
         ];
         const sql = 'INSERT INTO User (user_name, email, password, role) VALUES ?';
-        connection.query(sql, [userArr], (err, result, fields) => {                
+        connection.query(sql, [[userArr]], (err, result, fields) => {                
             if(err) reject(err);
-            if(result.affectedRows) {                 
-                resolve({
-                    status: 'SUCCESS',
-                    userId: result.insertId
-                });
+            console.log(result);
+            if(result && result.affectedRows) {
+                resolve(result.insertId)
             }else{
-                reject({
-                    status: 'FAILED',
-                    message: 'Cannot add new user. Check again'
-                });
+                resolve(false);
             }
         });
     });
@@ -40,58 +32,53 @@ UserModel.addNewUser = (user) => {
 UserModel.addNewCandidate = (candidate) => {
     return new Promise((resolve, reject) => {
         if(!candidate.user_id_fk) {
-            reject({
-                status: 'FAILED',
-                message: 'User Id Foreign Key must not be NULL!'
-            });
+            reject(false);
         }
         var candidateArr = [candidate.user_id_fk];
         var fields = 'user_id_fk, ';
-        if(candidate.first_name) 
+        if(candidate.first_name){
             fields += 'first_name, ';
             candidateArr.push(candidate.first_name);
-        if(candidate.last_name)
+        }
+        if(candidate.last_name){
             fields += 'last_name, ';
             candidateArr.push(candidate.last_name);
-        if(candidate.gender)
+        }
+        if(candidate.gender){
             fields += 'gender, ';
             candidateArr.push(candidate.gender);
-        if(candidate.birthday)
+        }
+        if(candidate.birthday){
             fields += 'birthday, ';
-            candidateArr.push(candidate.birthday);
-        if(candidate.phone)
+            candidateArr.push(candidate.birthday);            
+        }
+        if(candidate.phone){
             fields += 'phone, ';
-            candidateArr.push(candidate.phone);
-        if(candidate.address)
+            candidateArr.push(candidate.phone);            
+        }
+        if(candidate.address){
             fields += 'address, ';
-            candidateArr.push(candidate.address);
+            candidateArr.push(candidate.address);            
+        }
         fields = fields.slice(0,-2);
 
         const sql = 'INSERT INTO Candidate (' + fields + ') VALUES ?';
-        connection.query(sql, [candidateArr], (err, result, fields) => {                
+        var query = connection.query(sql, [[candidateArr]], (err, result, fields) => {                
             if(err) reject(err);
             if(result.affectedRows){
-                resolve({
-                    status: 'SUCCESS',
-                    candidateId: result.insertId
-                });
+                resolve(result.insertId); 
             }else{
-                reject({
-                    status: 'FAILED',
-                    message: 'Cannot add new user. Check again'
-                });
+                resolve(false);
             }
         });
+        console.log(query.sql);
     });
 }
 
 UserModel.addNewCompanyUser = (companyUser) => {
     return new Promise((resolve, reject) => {
         if(!companyUser.user_id_fk || !companyUser.company_id_fk) {
-            reject({
-                status: 'FAILED',
-                message: 'UserIdFk and CompanyIdFk must not be NULL!'
-            });
+            reject(false);
         }
         var companyUserArr = [companyUser.company_id_fk, companyUser.user_id_fk]
         var fields = 'company_id_fk, user_id_fk, ';
@@ -116,15 +103,9 @@ UserModel.addNewCompanyUser = (companyUser) => {
         connection.query(sql, [companyUserArr], (err, result, fields) => {                
             if(err) reject(err);
             if(result.affectedRows){
-                resolve({
-                    status: 'SUCCESS',
-                    company_user_id: result.insertId
-                });
+                resolve(result.insertId);
             }else{
-                reject({
-                    status: 'FAILED',
-                    message: 'Cannot add new user. Check again'
-                });
+                reject(false);
             }
         });
     });
@@ -206,6 +187,63 @@ UserModel.deleteRecByCandidate = (candidateId, recruitmentId) => {
     });
 }
 
+UserModel.getUserByEmailOrName = (user) => {
+    return new Promise((resolve, reject) => {
+        if ((!user.email && !user.user_name) || !user.password || !user.role){
+            resolve(false);
+        }
+        var target = '';
+        if(user.email){
+            target = "email = '" + user.email + "'";
+        }else {
+            target = "user_name = '" + user.user_name + "'";
+        }
+        var sql = 'SELECT user_id, user_name, email, role, created_date FROM User WHERE ' + target + ' AND password = ? AND role = ?';
+        var query = connection.query(sql, [md5(user.password), parseInt(user.role)], (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.length){
+                resolve(result[0]);
+            }else{
+                resolve(false);
+            }
+        });
+        console.log(query.sql);
+    }); 
+}
+
+UserModel.getCandidateByUserId = (userId) => {
+    return new Promise((resolve, reject) => {
+        if (!userId){
+            resolve(false);
+        }
+        var sql = 'SELECT * FROM Candidate WHERE user_id_fk = ' + userId;
+        connection.query(sql, (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.length){
+                resolve(result[0]);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
+
+UserModel.getCompanyUserByUserId = (userId) => {
+    return new Promise((resolve, reject) => {
+        if (!userId){
+            resolve(false);
+        }
+        var sql = 'SELECT * FROM Company_user WHERE user_id_fk = ' + userId;
+        connection.query(sql, (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.length){
+                resolve(result);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
 
 
 module.exports = UserModel;

@@ -34,4 +34,41 @@ router.post('/del_rec_by_candidate', function(req, res, next) {
     });
 });
 
+router.post('/register_candidate', function(req, res, next) {
+    var user = {
+        email: req.body.email,
+        user_name: req.body.user_name,
+        password: req.body.password,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name
+    };
+    UserController.registerCandidate(user).then(result => {
+        res.json(result);
+    });
+});
+
+router.post('/signin_candidate', function(req, res, next) {
+    var user = {
+        email: req.body.email,
+        user_name: req.body.user_name,
+        password: req.body.password,
+        role: req.body.role
+    }
+    UserController.getUserInfo(user).then(result => {
+        res.json(result);
+    });
+});
+
+router.post('/signin_company', function(req, res, next) {
+    var user = {
+        email: req.body.email,
+        user_name: req.body.user_name,
+        password: req.body.password,
+        role: req.body.role
+    }
+    UserController.getUserInfo(user).then(result => {
+        res.json(result);
+    });
+});
+
 module.exports = router;
