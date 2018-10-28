@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 24, 2018 at 06:11 AM
+-- Generation Time: Oct 28, 2018 at 11:59 AM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 5.6.38
 
@@ -45,7 +45,8 @@ CREATE TABLE `Candidate` (
 --
 
 INSERT INTO `Candidate` (`candidate_id`, `user_id_fk`, `first_name`, `last_name`, `gender`, `birthday`, `phone`, `address`, `career_info_id_fk`) VALUES
-(3, 2, 'Praesent elementum', 'Praesent elementum', 0, '2018-10-24', '09797901231', 'Praesent elementumPraesent elementumPraesent elementum', 0);
+(3, 2, 'Praesent elementum', 'Praesent elementum', 0, '2018-10-24', '09797901231', 'Praesent elementumPraesent elementumPraesent elementum', 0),
+(4, 5, 'nghia', 'duong trung', 0, NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -138,15 +139,17 @@ CREATE TABLE `Company_user` (
   `last_name` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
   `phone` varchar(255) NOT NULL,
-  `position` varchar(255) NOT NULL COMMENT 'Vi tri cong viec'
+  `position` varchar(255) NOT NULL COMMENT 'Vi tri cong viec',
+  `website_link` varchar(255) DEFAULT NULL,
+  `facebook_link` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `Company_user`
 --
 
-INSERT INTO `Company_user` (`company_user_id`, `company_id_fk`, `user_id_fk`, `first_name`, `last_name`, `address`, `phone`, `position`) VALUES
-(1, 1, 1, 'Curabitur tincidunt ', 'Curabitur tincidunt ', 'Curabitur tincidunt Curabitur tincidunt Curabitur tincidunt ', '0192121122', 'Curabitur tincidunt ');
+INSERT INTO `Company_user` (`company_user_id`, `company_id_fk`, `user_id_fk`, `first_name`, `last_name`, `address`, `phone`, `position`, `website_link`, `facebook_link`) VALUES
+(1, 1, 1, 'Curabitur tincidunt ', 'Curabitur tincidunt ', 'Curabitur tincidunt Curabitur tincidunt Curabitur tincidunt ', '0192121122', 'Curabitur tincidunt ', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -244,7 +247,8 @@ CREATE TABLE `User` (
 
 INSERT INTO `User` (`user_id`, `user_name`, `email`, `password`, `role`, `created_date`) VALUES
 (1, 'user0', 'hahah@gmail.com', '202cb962ac59075b964b07152d234b70', 2, 1539833924),
-(2, 'candidate', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', 1, 1540303230);
+(2, 'candidate', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', 1, 1540303230),
+(5, 'nghiadt', 'nghia@abc.com', '202cb962ac59075b964b07152d234b70', 1, 1540721613);
 
 --
 -- Triggers `User`
@@ -332,7 +336,7 @@ ALTER TABLE `User`
 -- AUTO_INCREMENT for table `Candidate`
 --
 ALTER TABLE `Candidate`
-  MODIFY `candidate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `candidate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `Candidate_recruitment`
@@ -380,7 +384,7 @@ ALTER TABLE `Recruitment`
 -- AUTO_INCREMENT for table `User`
 --
 ALTER TABLE `User`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
