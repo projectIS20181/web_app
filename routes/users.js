@@ -72,12 +72,14 @@ router.post('/signin_company', function(req, res, next) {
 });
 
 router.post('/update_can_info', function(req, res, next) {
-    var candidate = JSON.parse(req.body.candidate);
-    var careerInfo = JSON.parse(req.body.career_info);
+    var candidate = req.body.candidate;
+    var careerInfo = req.body.career_info;
+    // console.log(req.body)
     // res.json(candidate);
     UserController.updateCandidateInfo(candidate, careerInfo).then(result => {
         res.json(result);
     });
 });
+
 
 module.exports = router;
