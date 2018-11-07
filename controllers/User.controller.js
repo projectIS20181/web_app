@@ -1,4 +1,5 @@
 var UserModel = require('../models/User.model');
+var CareerModel = require('../models/CareerInfo.model');
 const COMPANY_CANDIDATE = require('../configs/constant').COMPANY_CANDIDATE;
 const USER_ROLE = require('../configs/constant').USER_ROLE;
 
@@ -208,6 +209,64 @@ UserController.getUserInfo = (user) => {
         }
     }).catch(err => {console.log(err)});
 }
+
+UserController.updateCandidateInfo = (candidate = {}, careerInfo = {}) => {
+    if(!candidate.candidate_id){
+        return {
+            status: 'FAILED',
+            message: 'Candidate.candidate_id must not be NULL!'
+        };
+    }
+    updateCareer = true;
+    if(careerInfo && Object.keys(careerInfo).length > 0){
+        // update career info
+        updateCareer = UserModel.getCandidateById(candidate.candidate_id).then(result => {
+            var careerInfoIdFk = result.career_info_id_fk;            
+            if(careerInfoIdFk == 0){
+                // insert new one
+                return CareerModel.insertNewCareer(careerInfo).then(resultId => {
+                    if(!resultId) return false;
+                    candidate['career_info_id_fk'] = resultId;
+                    return true;
+                });
+            }else{
+                //update an existed one
+                careerInfo.career_info_id = careerInfoIdFk;
+                return CareerModel.updateCareerById(careerInfo).then(updatedRes => {
+                    return updatedRes;
+                });
+            }
+        })
+    }
+
+    return Promise.all([updateCareer]).then(values => {
+        var updatedCareer = values[0];
+        var updatedCandidate = true;
+        console.log(candidate);
+        if(Object.keys(candidate).length > 1){
+            // update candidate info
+            return UserModel.updateCandidateById(candidate).then(result => {
+                return [updatedCareer, result];
+            });
+        }else{
+            return [updatedCareer, updatedCandidate];
+        }
+    }).then(values => {
+        if(values[0] && values[1]){
+            return {
+                status: 'SUCCESS',
+                message: 'Update candidate info successfully!'
+            };
+        }
+        return {
+            status: 'FAILED',
+            message: 'Cannot update at Candidate or Career_info',
+            candidate_status: values[1],
+            career_status: values[0] 
+        };
+    });
+}
+ 
 
 
 
