@@ -16,8 +16,7 @@ router.get('/get_by_industry_id/:id', function(req, res, next) {
 });
 
 router.post('/add_new_recuitment', function(req, res, next) {
-    res.json({result: req.body});
-    let recruitment = req.body;
+    var recruitment = req.body;
     RecruitmentController.addNewRecruitment(recruitment).then(result => {
         res.json(result)
     });

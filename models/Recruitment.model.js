@@ -31,14 +31,15 @@ RecruitmentModel.addNewRecruitment = (recruitment) => {
             recruitment.type_post || TYPE_POST.POSTING
         ];
         const sql = 'INSERT INTO Recruitment (company_id_fk, industry_id_fk, work_id, work_name, position, description, requirement, location, min_salary, max_salary, min_age, max_age, type_salary, type_candidate, gender_requirement, deadline, job_tags, type_post) VALUES ?';
-        connection.query(sql, [insertObj], (err, results, fields) => {                
+        var query = connection.query(sql, [[insertObj]], (err, result, fields) => {                
             if(err) reject(err);
-            if(results.affectedRows){
-                resolve(results.insertId);                
+            if(result && result.affectedRows){
+                resolve(result.insertId);                
             }else{
                 resolve(false);
             }
-        })
+        });
+        // console.log(query.sql);
     });
 }
 
