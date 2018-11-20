@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 07, 2018 at 04:13 AM
+-- Generation Time: Nov 20, 2018 at 06:20 PM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 5.6.38
 
@@ -45,7 +45,7 @@ CREATE TABLE `Candidate` (
 --
 
 INSERT INTO `Candidate` (`candidate_id`, `user_id_fk`, `first_name`, `last_name`, `gender`, `birthday`, `phone`, `address`, `career_info_id_fk`) VALUES
-(1, 1, 'nghia', 'duong trung', 0, NULL, '0971321311', NULL, 4);
+(1, 1, 'nghia', 'duong trung', 0, NULL, '1232214155', NULL, 4);
 
 -- --------------------------------------------------------
 
@@ -86,7 +86,7 @@ CREATE TABLE `Career_info` (
 --
 
 INSERT INTO `Career_info` (`career_info_id`, `industry_id_fk`, `career_goal`, `min_salary`, `max_salary`, `salary_type`, `job_type`, `position`, `experience`, `degree`, `foreign_lang`, `level_foreign_lang`, `resume_link`) VALUES
-(4, 1, 'Ta la Nghia day nhe nhe nhe', 0, 0, 0, 0, '', 0, 0, 0, 0, '');
+(4, 1, 'Ta la Nghia day', 0, 0, 0, 0, '', 0, 0, 0, 0, '123123');
 
 -- --------------------------------------------------------
 
@@ -208,8 +208,17 @@ CREATE TABLE `Recruitment` (
   `deadline` date DEFAULT NULL COMMENT 'Hạn nhận hồ sơ',
   `job_tags` text NOT NULL,
   `type_post` tinyint(10) NOT NULL COMMENT 'Xem constant.js',
+  `total_rating` float NOT NULL DEFAULT '0',
+  `rating_quantity` int(11) NOT NULL DEFAULT '0',
   `deleted` tinyint(2) NOT NULL DEFAULT '0' COMMENT 'Xem constant.js'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `Recruitment`
+--
+
+INSERT INTO `Recruitment` (`recruitment_id`, `company_id_fk`, `industry_id_fk`, `work_id`, `work_name`, `position`, `description`, `requirement`, `location`, `min_salary`, `max_salary`, `min_age`, `max_age`, `type_salary`, `type_candidate`, `gender_requirement`, `deadline`, `job_tags`, `type_post`, `total_rating`, `rating_quantity`, `deleted`) VALUES
+(1, 1, 1, 'Lorem ipsum dolor sit amet', 'Lap trinh vien mobile', 'Lorem ipsum dolor sit amet', 'Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet', 'Lorem ipsum dolor sit amet', 'Ha noi', 0, 0, 0, 0, 0, NULL, 0, NULL, '[\"lap trinh vien\", \"computer science\", \"mobile developer\"]', 0, 7.5, 3, 0);
 
 -- --------------------------------------------------------
 
@@ -360,7 +369,7 @@ ALTER TABLE `Industry`
 -- AUTO_INCREMENT for table `Recruitment`
 --
 ALTER TABLE `Recruitment`
-  MODIFY `recruitment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `recruitment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `User`

@@ -112,7 +112,7 @@ CareerModel.updateCareerById = (careerInfo) => {
         }
         fields = fields.slice(0,-2);
         
-        var sql = 'UPDATE Career_info SET ' + fields + ' WHERE career_info_id = ?';
+        var sql = 'UPDATE Career_info SET (' + fields + ') WHERE career_info_id = ?';
         var query = connection.query(sql, [careerInfo.career_info_id], (err, result, fields) => {                
             if(err) reject(err);
             if(result && result.affectedRows){

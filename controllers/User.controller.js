@@ -27,7 +27,7 @@ UserController.candidateSaveRecruitment = (candidateId, recruitmentId) => {
     }).catch(err => {console.log(err)});
 }
 
-UserController.getRecruitmentByCandidateId = (candidateId, limit = -1, offset = -1) => {
+UserController.getRecruitmentByCandidateId = (candidateId, limit = 10, offset = 0) => {
     if(!candidateId){
         return Promise.resolve({
             status: 'FAILED',

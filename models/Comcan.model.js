@@ -53,7 +53,7 @@ ComcanModel.updateComCanFollowing = (candidateId, companyId, type) => {
 }
 
 // get candidates followed by company
-ComcanModel.getCanByComId = (companyId, limit = -1, offset = -1) => {
+ComcanModel.getCanByComId = (companyId, limit = 10, offset = 0) => {
     return new Promise((resolve, reject) => {
         if (!companyId){
             resolve(false);
@@ -76,7 +76,7 @@ ComcanModel.getCanByComId = (companyId, limit = -1, offset = -1) => {
 }
 
 // get companies followed by candidate
-ComcanModel.getComByCanId = (candidateId, limit = -1, offset = -1) => {
+ComcanModel.getComByCanId = (candidateId, limit = 10, offset = 0) => {
     return new Promise((resolve, reject) => {
         if (!candidateId){
             resolve(false);

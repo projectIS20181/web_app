@@ -48,8 +48,8 @@ router.post('/del_following', function(req, res, next){
 
 router.get('/get_com_by_can_id/:id', function(req, res, next){
     let id = req.params.id;
-    let limit = req.query.limit || -1;
-    let offset = req.query.offset || -1;
+    let limit = req.query.limit || 10;
+    let offset = req.query.offset || 0;
     
     ComcanController.getComByCanId(id, limit, offset).then(companies => {
         res.json(companies);

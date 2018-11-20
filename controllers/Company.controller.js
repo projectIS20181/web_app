@@ -46,4 +46,6 @@ CompanyController.getById = (companyId) => {
     }).catch(err => console.log(err));
 }
 
+
+
 module.exports = CompanyController;

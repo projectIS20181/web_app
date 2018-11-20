@@ -18,8 +18,8 @@ router.post('/candidate_save_rec', function(req, res, next) {
 
 router.get('/get_rec_by_candidate/:id', function(req, res, next) {
     let candidateId = req.params.id;
-    let limit = req.query.limit || -1;
-    let offset = req.query.offset || -1;
+    let limit = req.query.limit || 10;
+    let offset = req.query.offset || 0;
     
     UserController.getRecruitmentByCandidateId(candidateId, limit, offset).then(result => {
         res.json(result)
