@@ -82,4 +82,15 @@ router.post('/update_can_info', function(req, res, next) {
 });
 
 
+// ! post id lấy user
+router.post('/get_user_by_id',function(req, res, next) {
+    var user_id  = req.body.id;
+    console.log(user_id);
+    UserController.getUserById(parseInt(user_id))
+    .then(result => {
+        res.json(result);
+    })
+})
+
+
 module.exports = router;

@@ -310,4 +310,23 @@ UserModel.getCandidateById = (candidateId) => {
     });
 }
 
+// todo get_user_by_id
+UserModel.getUserById = (user_id) => {
+    return new Promise((resolve, reject ) => {
+        if(!user_id){
+            resolve(false);
+        }
+        var sql = 'SELECT * FROM job_solution.user WHERE user.user_id = ?';
+        connection.query(sql, [user_id], (err, result, fields ) =>{
+            if(err) reject(err);
+            if( result && result.length) {
+                resolve(result[0]);
+            }
+            else {
+                resolve(false);
+            }
+        });
+    });
+};
+
 module.exports = UserModel;

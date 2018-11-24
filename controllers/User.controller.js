@@ -194,7 +194,7 @@ UserController.getUserInfo = (user) => {
             });
         }else if(user.role == USER_ROLE.COMPANY){
             return UserModel.getCompanyUserByUserId(resultUser.user_id).then(companyUsers => {
-                if(!candidate){
+                if(!companyUsers){
                     return {
                         status: 'FAILED',
                         message: 'Cannot get candidate by user id'
@@ -265,6 +265,29 @@ UserController.updateCandidateInfo = (candidate = {}, careerInfo = {}) => {
             career_status: values[0] 
         };
     });
+}
+
+//todo get_user_by_id
+UserController.getUserById = (user_id) => {
+    if(!user_id){
+        return {
+            status: 'FAILED',
+            message: 'user_id must not null'
+        }
+    }
+    return UserModel.getUserById(parseInt(user_id)).then(resultUser => {
+        if(!resultUser) {
+            return {
+                status: 'FAILED',
+                message: 'user_id are incorrect. Check again.'
+            };
+        };
+        return  {
+            status: 'SUCCESS',
+            user: resultUser,
+        }
+    })
+    .catch(err => console.log(err))
 }
  
 
