@@ -198,9 +198,11 @@ UserModel.getUserByEmailOrName = (user, checkExisted = false) => {
             resolve(false);
         }
         var target = '';
-        if(user.email){
+        if(user.email && user.user_name){
+            target = "(email = '" + user.email + "' OR " + "user_name = '" + user.user_name + "')";
+        }else if(user.email){
             target = "email = '" + user.email + "'";
-        }else {
+        }else if(user.user_name){
             target = "user_name = '" + user.user_name + "'";
         }
         var sql = 'SELECT user_id, user_name, email, role, created_date FROM User WHERE ' + target + ' AND role = ? ';
