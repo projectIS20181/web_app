@@ -348,8 +348,58 @@ UserController.updateUserCompanyById = (userCompany = {}) => {
     }).catch(err => {console.log(err)});
 }
 
+UserController.getUserCompanyByUserId = (userId) => {
+    if (!userId){
+        return Promise.resolve({
+            status: 'FAILED',
+            message: 'User_id must not be NULL!'
+        });
+    }
 
+    return Promise.all([UserModel.getUserById(userId, USER_ROLE.COMPANY), UserModel.getCompanyUserByUserId(userId)]).then(result => {
+        var user = result[0];
+        var userCompany = result[1];
+        if(!user){
+            return {
+                status: 'FAILED',
+                message: 'Cannot get User by User_id. Check again.'
+            };
+        }
+        if(!userCompany){
+            return {
+                status: 'FAILED',
+                message: 'Cannot get CompanyUser by User_id_fk. Check again.'
+            };
+        }
+        return {
+            status: 'SUCCESS',
+            user: user,
+            company_user: userCompany
+        }
+    }).catch(err => {console.log(err)});
+}
 
+UserController.searchCandidate = (criteria, limit = 10, offset = 0) => {
+    if(!criteria){
+        return {
+            status: 'FAILED',
+            message: 'Criteria must not be NULL!'
+        };
+    }
+    return CareerModel.search(criteria, limit, offset).then(results => { 
+        if(!results){
+            return {
+                status: 'FAILED',
+                message: 'Cannot find any candidate'
+            };
+        }else{
+            return {
+                status: 'SUCCESS',
+                results: results
+            };
+        }
+    }).catch(err => {console.log(err)});
+}
 
 module.exports = UserController;
 

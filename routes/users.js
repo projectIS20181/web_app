@@ -107,5 +107,21 @@ router.post('/update_user_company', function(req, res, next) {
     });
 });
 
+router.post('/get_user_com_by_user_id', function(req, res, next) {
+    var userId = req.body.user_id;
+    UserController.getUserCompanyByUserId(userId).then(result => {
+        res.json(result);
+    });
+});
+
+router.post('/search_candidate', function(req, res, next) {
+    var criteria = req.body;
+    let limit = req.query.limit || 10;
+    let offset = req.query.offset || 0;
+    UserController.searchCandidate(criteria, limit, offset).then(result => {
+        res.json(result);
+    });
+});
+
 
 module.exports = router;

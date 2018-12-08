@@ -357,4 +357,39 @@ UserModel.updateUserCompanyById = (userCompany) => {
     });
 }
 
+
+UserModel.getCompanyUserByUserId = (userIdFk) => {
+    return new Promise((resolve, reject) => {
+        if (!userIdFk){
+            resolve(false);
+        }
+        var sql = 'SELECT * FROM Company_user WHERE user_id_fk = ' + userIdFk;
+        connection.query(sql, (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.length){
+                resolve(result[0]);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
+
+UserModel.getUserById = (userId, role) => {
+    return new Promise((resolve, reject) => {
+        if (!userId){
+            resolve(false);
+        }
+        var sql = 'SELECT user_id, user_name, email, role, created_date FROM User WHERE user_id = ' + userId + ' AND role = ' + role;
+        connection.query(sql, (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.length){
+                resolve(result[0]);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
+
 module.exports = UserModel;

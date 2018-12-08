@@ -130,30 +130,41 @@ CareerModel.search = (criteria, limit = 10, offset = 0) => {
         if(!criteria) {
             resolve(false);        
         }
-        var sql = '';
-        // Search with company name
-        if(criteria.company_name){
-            sql += 'SELECT * FROM Recruitment, Company WHERE deleted = 0 AND company_id = company_id_fk AND ';
-            sql += 'company_name LIKE "%' + criteria.company_name + '%" AND ';
-        }else{
-            sql += 'SELECT * FROM Recruitment WHERE ';
-        }
+        var sql = 'SELECT Candidate.*, Career_info.* FROM Candidate, Career_info WHERE career_info_id = career_info_id_fk AND ';
 
-        if(criteria.industry_id) {
-            sql += 'industry_id_fk = ' + criteria.industry_id + ' AND ';
+        if(criteria.position) {
+            criteria.position = criteria.position.trim().toLowerCase();
+            sql += 'LOWER(Career_info.position) LIKE "%' + criteria.position + '%" AND ';
         }
-        if(criteria.work_name) {
-            criteria.work_name = criteria.work_name.trim().toLowerCase();
-            sql += '(LOWER(work_name) LIKE "%' + criteria.work_name + '%" OR ';
-            sql += 'LOWER(job_tags) LIKE "%' + criteria.work_name + '%") AND ';
+        if(criteria.degree){
+            sql += 'Career_info.degree = ' + criteria.degree + ' AND ';
         }
-        if(criteria.location){
-            criteria.location = criteria.location.trim().toLowerCase();
-            sql += 'LOWER(location) LIKE "%' + criteria.location + '%" AND ';
+        if(criteria.job_type){
+            sql += 'Career_info.job_type = ' + criteria.job_type + ' AND ';
         }
-        if(limit > -1 && offset > -1) {
-            sql = sql.slice(0,-4);
+        if(criteria.min_salary){
+            sql += 'Career_info.min_salary >= ' + criteria.min_salary + ' AND ';
+        }
+        if(criteria.max_salary){
+            sql += 'Career_info.max_salary <= ' + criteria.max_salary + ' AND ';
+        }
+        if(criteria.salary_type){
+            sql += 'Career_info.salary_type = ' + criteria.salary_type + ' AND ';
+        }
+        if(criteria.experience){
+            sql += 'Career_info.experience >= ' + criteria.experience + ' AND ';
+        }
+        if(criteria.foreign_lang){
+            sql += 'Career_info.foreign_lang = ' + criteria.foreign_lang + ' AND ';
+        }
+        if(criteria.foreign_lang){
+            sql += 'Career_info.level_foreign_lang >= ' + criteria.level_foreign_lang + ' AND ';
+        }
+        sql = sql.slice(0,-4);        
+        if(limit > -1 && offset > -1) {            
             sql += 'LIMIT ' + limit + ' OFFSET ' + offset;
+        }else{
+            sql += 'LIMIT 10 OFFSET 0 ';
         }
         var query = connection.query(sql, (err, results, fields) => {                
             if(err) reject(err);
@@ -163,7 +174,7 @@ CareerModel.search = (criteria, limit = 10, offset = 0) => {
                 resolve(false);
             }
         });
-        // console.log(query.sql);
+        console.log(query.sql);
     });
 }
 
