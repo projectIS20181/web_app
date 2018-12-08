@@ -19,7 +19,6 @@ UserModel.addNewUser = (user) => {
         const sql = 'INSERT INTO User (user_name, email, password, role) VALUES ?';
         connection.query(sql, [[userArr]], (err, result, fields) => {                
             if(err) reject(err);
-            console.log(result);
             if(result && result.affectedRows) {
                 resolve(result.insertId)
             }else{
@@ -105,14 +104,15 @@ UserModel.addNewCompanyUser = (companyUser) => {
         fields = fields.slice(0,-2);
 
         const sql = 'INSERT INTO Company_user (' + fields + ') VALUES ?';
-        connection.query(sql, [companyUserArr], (err, result, fields) => {                
+        var query = connection.query(sql, [[companyUserArr]], (err, result, fields) => {                
             if(err) reject(err);
-            if(result.affectedRows){
+            if(result && result.affectedRows){
                 resolve(result.insertId);
             }else{
-                reject(false);
+                resolve(false);
             }
         });
+        // console.log(query.sql);
     });
 }
 
@@ -192,7 +192,7 @@ UserModel.deleteRecByCandidate = (candidateId, recruitmentId) => {
     });
 }
 
-UserModel.getUserByEmailOrName = (user) => {
+UserModel.getUserByEmailOrName = (user, checkExisted = false) => {
     return new Promise((resolve, reject) => {
         if ((!user.email && !user.user_name) || !user.password || !user.role){
             resolve(false);
@@ -203,8 +203,13 @@ UserModel.getUserByEmailOrName = (user) => {
         }else {
             target = "user_name = '" + user.user_name + "'";
         }
-        var sql = 'SELECT user_id, user_name, email, role, created_date FROM User WHERE ' + target + ' AND password = ? AND role = ?';
-        var query = connection.query(sql, [md5(user.password), parseInt(user.role)], (err, result, fields) => {                
+        var sql = 'SELECT user_id, user_name, email, role, created_date FROM User WHERE ' + target + ' AND role = ? ';
+        var parseArr = [parseInt(user.role)]
+        if(!checkExisted){
+            sql += 'AND password = ? '
+            parseArr.push(md5(user.password))
+        }
+        var query = connection.query(sql, parseArr, (err, result) => {                
             if(err) reject(err);
             if(result && result.length){
                 resolve(result[0]);
@@ -212,7 +217,7 @@ UserModel.getUserByEmailOrName = (user) => {
                 resolve(false);
             }
         });
-        console.log(query.sql);
+        // console.log(query.sql);
     }); 
 }
 
@@ -293,6 +298,7 @@ UserModel.updateCandidateById = (candidate) => {
         });
     });
 }
+
 UserModel.getCandidateById = (candidateId) => {
     return new Promise((resolve, reject) => {
         if (!candidateId){
@@ -303,6 +309,47 @@ UserModel.getCandidateById = (candidateId) => {
             if(err) reject(err);
             if(result && result.length){
                 resolve(result[0]);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
+
+UserModel.updateUserCompanyById = (userCompany) => {
+    return new Promise((resolve, reject) => {
+        if (!userCompany.company_user_id){
+            resolve(false);
+        }
+        var fields = "";
+        if(userCompany.first_name){
+            fields += "first_name = " + "'" + userCompany.first_name + "' , ";
+        }
+        if(userCompany.last_name){
+            fields += "last_name = " + "'" + userCompany.last_name + "' , ";
+        }
+        if(userCompany.address){
+            fields += "address = " + "'" + userCompany.address + "' , ";
+        }
+        if(userCompany.phone){
+            fields += "phone = " + userCompany.phone + " , ";
+        }
+        if(userCompany.position){
+            fields += "position = " + "'" + userCompany.position + "' , ";
+        }
+        if(userCompany.website_link){
+            fields += "website_link = " + "'" + userCompany.website_link + "' , ";
+        }        
+        if(userCompany.facebook_link){
+            fields += "facebook_link = " + "'" + userCompany.facebook_link + "' , ";
+        }
+        fields = fields.slice(0,-2);
+        
+        var sql = 'UPDATE company_user SET ' + fields + ' WHERE company_user_id = ?';
+        connection.query(sql, [userCompany.company_user_id], (err, result, fields) => {                
+            if(err) reject(err);
+            if(result && result.affectedRows){
+                resolve(true);
             }else{
                 resolve(false);
             }

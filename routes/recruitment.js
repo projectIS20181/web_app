@@ -51,6 +51,54 @@ router.post('/average_rating_point', function(req, res, next) {
     });
 });
 
+router.get('/get_by_company_id/:id', function(req, res, next) {
+    // Eg: get_by_id/1?limit=10&offset=0
 
+    let id = req.params.id;
+    let limit = req.query.limit || 10;
+    let offset = req.query.offset || 0;
+    
+    RecruitmentController.getByCompanyId(id, limit, offset).then(recruitments => {
+        res.json(recruitments);
+    }).catch(err => {throw err;});
+});
 
+router.get('/get_by_id/:id', function(req, res, next) {
+    // Eg: get_by_id/1?limit=10&offset=0
+
+    let id = req.params.id;
+    let limit = req.query.limit || 10;
+    let offset = req.query.offset || 0;
+    
+    RecruitmentController.getByCompanyId(id, limit, offset).then(recruitments => {
+        res.json(recruitments);
+    }).catch(err => {throw err;});
+});
+
+router.get('/get_by_type_post/:type/company_id/:company_id', function(req, res, next) {
+    // Eg: get_by_id/1?limit=10&offset=0
+
+    let type = req.params.type;
+    let companyId = req.params.company_id
+    let limit = req.query.limit || 10;
+    let offset = req.query.offset || 0;
+    
+    RecruitmentController.getByTypePost(type, companyId, limit, offset).then(recruitments => {
+        res.json(recruitments);
+    }).catch(err => {throw err;});
+});
+
+router.get('/delete_by_id/:id', function(req, res, next) {
+    let recruitmentId = req.params.id;
+    RecruitmentController.deleteById(recruitmentId).then(result => {
+        res.json(result)
+    });
+});
+
+router.post('/update_recruitment', function(req, res, next) {
+    let recruitment = req.body;
+    RecruitmentController.updateRecruitmentById(recruitment).then(result => {
+        res.json(result)
+    });
+});
 module.exports = router;

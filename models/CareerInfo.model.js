@@ -125,4 +125,46 @@ CareerModel.updateCareerById = (careerInfo) => {
     });
 }
 
+CareerModel.search = (criteria, limit = 10, offset = 0) => {
+    return new Promise((resolve, reject) => {
+        if(!criteria) {
+            resolve(false);        
+        }
+        var sql = '';
+        // Search with company name
+        if(criteria.company_name){
+            sql += 'SELECT * FROM Recruitment, Company WHERE deleted = 0 AND company_id = company_id_fk AND ';
+            sql += 'company_name LIKE "%' + criteria.company_name + '%" AND ';
+        }else{
+            sql += 'SELECT * FROM Recruitment WHERE ';
+        }
+
+        if(criteria.industry_id) {
+            sql += 'industry_id_fk = ' + criteria.industry_id + ' AND ';
+        }
+        if(criteria.work_name) {
+            criteria.work_name = criteria.work_name.trim().toLowerCase();
+            sql += '(LOWER(work_name) LIKE "%' + criteria.work_name + '%" OR ';
+            sql += 'LOWER(job_tags) LIKE "%' + criteria.work_name + '%") AND ';
+        }
+        if(criteria.location){
+            criteria.location = criteria.location.trim().toLowerCase();
+            sql += 'LOWER(location) LIKE "%' + criteria.location + '%" AND ';
+        }
+        if(limit > -1 && offset > -1) {
+            sql = sql.slice(0,-4);
+            sql += 'LIMIT ' + limit + ' OFFSET ' + offset;
+        }
+        var query = connection.query(sql, (err, results, fields) => {                
+            if(err) reject(err);
+            if(results && results.length){                
+                resolve(results);                
+            }else{
+                resolve(false);
+            }
+        });
+        // console.log(query.sql);
+    });
+}
+
 module.exports = CareerModel;

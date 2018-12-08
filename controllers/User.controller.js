@@ -1,5 +1,6 @@
 var UserModel = require('../models/User.model');
 var CareerModel = require('../models/CareerInfo.model');
+var CompanyModel = require('../models/Company.model');
 const COMPANY_CANDIDATE = require('../configs/constant').COMPANY_CANDIDATE;
 const USER_ROLE = require('../configs/constant').USER_ROLE;
 
@@ -117,47 +118,105 @@ UserController.registerCandidate = (user) => {
     }).catch(err => {console.log(err)});    
 }
 
-UserController.registerCompany = (user) => {
-    if ((!user.email && !user.user_name) || !user.password){
+UserController.registerCompany = (user, company) => {
+    if ((!user.email && !user.user_name) || !user.password || !company.company_name){
         return Promise.resolve({
             status: 'FAILED',
-            message: 'Email (or Username) and Password must not be NULL!'
+            message: 'Email (or User_name) and Password and Company_name must not be NULL!'
         });
     }
     if (!user.email) user.email = '';
     if (!user.user_name) user.user_name = '';
     user.role = USER_ROLE.COMPANY;
 
-    return UserModel.getUserByEmailOrName(user).then(existedUser => {
+    return UserModel.getUserByEmailOrName(user, true).then(existedUser => {
         if(existedUser){
             return {
                 status: 'FAILED',
                 message: 'Username or email is existed!'
             };
         }
-        return UserModel.addNewUser(user).then(userId => {
+        return Promise.all([UserModel.addNewUser(user), CompanyModel.addNewCompany(company)]).then(results => {
+            var userId = results[0];
+            var companyId = results[1]
             if (!userId){
                 return {
                     status: 'FAILED',
                     message: 'Cannot add new user. Check again'
                 };
             }
-            var candidate = {
+            if (!companyId){
+                return {
+                    status: 'FAILED',
+                    message: 'Cannot add new Company. Check again'
+                };
+            }
+            var userCompany = {
+                company_id_fk: companyId,
                 user_id_fk: userId,
                 first_name: user.first_name,
                 last_name: user.last_name
             }
-            return UserModel.addNewCompanyUser(candidate).then(candidateId => {
-                if (!candidateId){
+            return UserModel.addNewCompanyUser(userCompany).then(userComId => {
+                if (!userComId){
                     return {
                         status: 'FAILED',
-                        message: 'Cannot add new candidate. Check again'
+                        message: 'Cannot add new company user. Check again'
                     };
                 }
                 return {
                     status: 'SUCCESS',
                     user_id: userId,
-                    candidate_id: candidateId 
+                    company_user_id: userComId 
+                }
+            })
+        }).catch(err => {console.log(err)});
+    }).catch(err => {console.log(err)});
+}
+
+UserController.registerUserCompany = (user, company) => {
+    if ((!user.email && !user.user_name) || !user.password || !company.company_id_fk){
+        return Promise.resolve({
+            status: 'FAILED',
+            message: 'Email (or User_name) and Password and Company_id_fk must not be NULL!'
+        });
+    }
+    if (!user.email) user.email = '';
+    if (!user.user_name) user.user_name = '';
+    user.role = USER_ROLE.COMPANY;
+
+    return UserModel.getUserByEmailOrName(user, true).then(existedUser => {
+        if(existedUser){
+            return {
+                status: 'FAILED',
+                message: 'Username or email is existed!'
+            };
+        }
+        return Promise.all([UserModel.addNewUser(user)]).then(results => {
+            var userId = results[0];
+            if (!userId){
+                return {
+                    status: 'FAILED',
+                    message: 'Cannot add new user. Check again'
+                };
+            }
+            var userCompany = {
+                company_id_fk: company.company_id_fk,
+                user_id_fk: userId,
+                first_name: user.first_name,
+                last_name: user.last_name
+            }
+            return UserModel.addNewCompanyUser(userCompany).then(userComId => {
+                if (!userComId){
+                    return {
+                        status: 'FAILED',
+                        message: 'Cannot add new company user. Check again'
+                    };
+                }
+                return {
+                    status: 'SUCCESS',
+                    user_id: userId,
+                    company_user_id: userComId 
                 }
             })
         }).catch(err => {console.log(err)});
@@ -166,10 +225,10 @@ UserController.registerCompany = (user) => {
 
 UserController.getUserInfo = (user) => {
     if ((!user.email && !user.user_name) || !user.password || !user.role){
-        return {
+        return Promise.resolve({
             status: 'FAILED',
             message: 'Email (username) and Password and Role must not be NULL!'
-        };        
+        });
     }
     return UserModel.getUserByEmailOrName(user).then(resultUser => {
         if(!resultUser){
@@ -194,10 +253,10 @@ UserController.getUserInfo = (user) => {
             });
         }else if(user.role == USER_ROLE.COMPANY){
             return UserModel.getCompanyUserByUserId(resultUser.user_id).then(companyUsers => {
-                if(!candidate){
+                if(!companyUsers){
                     return {
                         status: 'FAILED',
-                        message: 'Cannot get candidate by user id'
+                        message: 'Cannot get company user by user id'
                     };
                 }
                 return {
@@ -266,7 +325,28 @@ UserController.updateCandidateInfo = (candidate = {}, careerInfo = {}) => {
         };
     });
 }
- 
+
+UserController.updateUserCompanyById = (userCompany = {}) => {
+    if(!userCompany.company_user_id){
+        return {
+            status: 'FAILED',
+            message: 'Company_user_id must not be NULL!'
+        };
+    }
+    return UserModel.updateUserCompanyById(userCompany).then(result => { 
+        if(!result){
+            return {
+                status: 'FAILED',
+                message: 'Cannot update user_company table by Company_user_id'
+            };
+        }else{
+            return {
+                status: 'SUCCESS',
+                message: 'Update successfully!'
+            };
+        }
+    }).catch(err => {console.log(err)});
+}
 
 
 

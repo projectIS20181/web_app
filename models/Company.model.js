@@ -5,33 +5,46 @@ var CompanyModel = {}
 
 CompanyModel.addNewCompany = (company) => {
     return new Promise((resolve, reject) => {
-        if(!company.name) {
-            reject({
-                status: 'FAILED',
-                message: 'Company name must not be null.'
-            });
+        if(!company.company_name) {
+            resolve(false);
+        }        
+
+        var companyArr = [];
+        var fields = '';
+        if(company.company_name){
+            fields += 'company_name, ';
+            companyArr.push(company.company_name);
         }
-        let insertObj = [
-            company.name,
-            company.total_employee || 0,
-            company.intro || '',
-            company.logo || '',
-            company.banner || '',
-            company.location || ''
-        ];
-        const sql = 'INSERT INTO Company (company_name, total_employee, intro, logo, banner, location) VALUES ?';
-        connection.query(sql, [insertObj], (err, results, fields) => {                
+        if(company.total_employee){
+            fields += 'total_employee, ';
+            companyArr.push(company.total_employee);
+        }
+        if(company.intro){
+            fields += 'intro, ';
+            companyArr.push(company.intro);
+        }
+        if(company.logo){
+            fields += 'logo, ';
+            companyArr.push(company.logo);
+        }
+        if(company.banner){
+            fields += 'banner, ';
+            companyArr.push(company.banner);
+        }
+        if(company.location){
+            fields += 'location, ';
+            companyArr.push(company.location);
+        }        
+        
+        fields = fields.slice(0,-2);
+
+        const sql = 'INSERT INTO Company (' + fields + ') VALUES ?';
+        connection.query(sql, [[companyArr]], (err, result) => {                
             if(err) reject(err);
-            if(results.affectedRows) {
-                resolve({
-                    status: 'SUCCESS',
-                    companyId: results.insertId
-                });
+            if(result && result.affectedRows) {
+                resolve(result.insertId);
             }else{
-                reject({
-                    status: 'FAILED',
-                    message: 'Cannot add new Company. Check again'
-                });
+                resolve(false);
             }
         })
     });
@@ -55,5 +68,41 @@ CompanyModel.getById = (companyId) => {
     });
 }
 
-
+CompanyModel.updateCompanyById = (company) => {
+    return new Promise((resolve, reject) => {
+        if (!company.company_id){
+            resolve(false);
+        }
+        var fields = "";
+        if(company.company_name){
+            fields += 'company_name = ' + '"' + company.company_name + '" , ';
+        }
+        if(company.total_employee){
+            fields += 'total_employee = ' + '"' + company.total_employee + '" , ';
+        }
+        if(company.intro){
+            fields += 'intro = ' + '"' + company.intro + '" , ';
+        }
+        if(company.logo){
+            fields += 'logo = ' + '"' + company.logo + '"' + ' , ';
+        }
+        if(company.banner){
+            fields += 'banner = ' + '"' + company.banner + '"' + ' , ';
+        }
+        if(company.location){
+            fields += 'location = ' + '"' + company.location +'"' + ' , ';
+        }             
+        fields = fields.slice(0,-2);
+        
+        var sql = 'UPDATE company SET ' + fields + ' WHERE company_id = ' + company.company_id + ' ';
+        connection.query(sql, (err, result) => {                
+            if(err) reject(err);
+            if(result && result.affectedRows){
+                resolve(true);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
 module.exports = CompanyModel;

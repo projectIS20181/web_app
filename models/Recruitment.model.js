@@ -43,12 +43,15 @@ RecruitmentModel.addNewRecruitment = (recruitment) => {
     });
 }
 
-RecruitmentModel.getById = (recruitmentId) => {
+RecruitmentModel.getById = (recruitmentId, limit = 10, offset = 0) => {
     return new Promise((resolve, reject) => {
         if (!recruitmentId){
             resolve(false);
         }
-        var sql = 'SELECT * FROM Recruitment WHERE recruitment_id = ? ';
+        var sql = 'SELECT * FROM Recruitment WHERE recruitment_id = ? AND deleted = 0 ';
+        if(limit > -1 && offset > -1) {
+            sql += 'LIMIT ' + limit + ' OFFSET ' + offset;
+        }
         
         connection.query(sql, [recruitmentId], (err, results, fields) => {                
             if(err) reject(err);
@@ -66,7 +69,7 @@ RecruitmentModel.getByIndustryId = (industryIdFk, limit = 10, offset = 0) => {
         if (!industryIdFk){
             resolve(false);
         }
-        var sql = 'SELECT * FROM Recruitment WHERE industry_id_fk = ? ';
+        var sql = 'SELECT * FROM Recruitment WHERE industry_id_fk = ? AND deleted = 0 ';
         if(limit > -1 && offset > -1) {
             sql += 'LIMIT ' + limit + ' OFFSET ' + offset;
         }
@@ -81,7 +84,7 @@ RecruitmentModel.getByIndustryId = (industryIdFk, limit = 10, offset = 0) => {
     });
 }
 
-RecruitmentModel.search = (criteria, limit = 0, offset = 10) => {
+RecruitmentModel.search = (criteria, limit = 10, offset = 0) => {
     return new Promise((resolve, reject) => {
         if(!criteria) {
             resolve(false);        
@@ -89,7 +92,7 @@ RecruitmentModel.search = (criteria, limit = 0, offset = 10) => {
         var sql = '';
         // Search with company name
         if(criteria.company_name){
-            sql += 'SELECT * FROM Recruitment, Company WHERE company_id = company_id_fk AND ';
+            sql += 'SELECT * FROM Recruitment, Company WHERE deleted = 0 AND company_id = company_id_fk AND ';
             sql += 'company_name LIKE "%' + criteria.company_name + '%" AND ';
         }else{
             sql += 'SELECT * FROM Recruitment WHERE ';
@@ -161,5 +164,132 @@ RecruitmentModel.getRatingPoint = (recruitmentId) => {
     });
 }
 
+RecruitmentModel.getByCompanyId = (companyId, limit = 10, offset = 0) => {
+    return new Promise((resolve, reject) => {
+        if (!companyId){
+            resolve(false);
+        }
+        var sql = 'SELECT * FROM Recruitment WHERE company_id_fk = ? AND deleted = 0 ';
+        if(limit > -1 && offset > -1) {
+            sql += 'LIMIT ' + limit + ' OFFSET ' + offset;
+        }
+        
+        connection.query(sql, [companyId], (err, results) => {                
+            if(err) reject(err);
+            if(results && results.length){
+                resolve(results);
+            }else{
+                resolve(false);
+            }
+        })
+    });
+}
+
+RecruitmentModel.getByTypePost = (typePost, companyId, limit = 10, offset = 0) => {
+    return new Promise((resolve, reject) => {
+        if (!typePost || !companyId){
+            resolve(false);
+        }
+        var sql = 'SELECT * FROM Recruitment WHERE type_post = ? AND company_id_fk = ? AND deleted = 0 ';
+        if(limit > -1 && offset > -1) {
+            sql += 'LIMIT ' + limit + ' OFFSET ' + offset;
+        }
+        
+        connection.query(sql, [typePost, companyId], (err, results) => {                
+            if(err) reject(err);
+            if(results && results.length){
+                resolve(results);
+            }else{
+                resolve(false);
+            }
+        })
+    });
+}
+
+RecruitmentModel.deleteById = (recruitmentId) => {
+    return new Promise((resolve, reject) => {
+        if (!recruitmentId){
+            resolve(false);
+        }
+        var sql = 'UPDATE Recruitment SET deleted = 1 WHERE recruitment_id = ? ';
+        
+        connection.query(sql, [recruitmentId], (err, result) => {                
+            if(err) reject(err);
+            if(result && result.affectedRows){
+                resolve(true);
+            }else{
+                resolve(false);
+            }
+        })
+    });
+}
+
+RecruitmentModel.updateRecruitmentById = (recruitment) => {
+    return new Promise((resolve, reject) => {
+        if (!recruitment.recruitment_id){
+            resolve(false);
+        }
+        var fields = "";
+        if(recruitment.work_name){
+            fields += 'work_name = ' + '"' + recruitment.work_name + '" , ';
+        }
+        if(recruitment.industry_id_fk){
+            fields += 'industry_id_fk = ' + recruitment.industry_id_fk + ' , ';
+        }
+        if(recruitment.work_id){
+            fields += 'work_id = ' + '"' + recruitment.work_id + '" , ';
+        }
+        if(recruitment.position){
+            fields += 'position = ' + '"' + recruitment.position + '"' + ' , ';
+        }
+        if(recruitment.description){
+            fields += 'description = ' + '"' + recruitment.description + '"' + ' , ';
+        }
+        if(recruitment.requirement){
+            fields += 'requirement = ' + '"' + recruitment.requirement + '"' + ' , ';
+        } 
+        if(recruitment.requirement){
+            fields += 'requirement = ' + '"' + recruitment.requirement + '"' + ' , ';
+        }
+        if(recruitment.location){
+            fields += 'location = ' + '"' + recruitment.location + '"' + ' , ';
+        } 
+        if(recruitment.min_salary){
+            fields += 'min_salary = ' + recruitment.min_salary + ' , ';
+        }
+        if(recruitment.max_salary){
+            fields += 'max_salary = ' + recruitment.max_salary + ' , ';
+        }
+        if(recruitment.min_age){
+            fields += 'min_age = ' + recruitment.min_age + ' , ';
+        }
+        if(recruitment.max_age){
+            fields += 'max_age = ' + recruitment.max_age + ' , ';
+        }
+        if(recruitment.type_salary){
+            fields += 'type_salary = ' + recruitment.type_salary + ' , ';
+        }
+        if(recruitment.type_candidate){
+            fields += 'type_candidate = ' + recruitment.type_candidate + ' , ';
+        }
+        if(recruitment.deadline){
+            fields += 'deadline = ' + recruitment.deadline + ' , ';
+        }
+        if(recruitment.job_tags){
+            fields += 'job_tags = ' + '"' + recruitment.job_tags + '"' + ' , ';
+        }            
+        fields = fields.slice(0,-2);
+        
+        var sql = 'UPDATE recruitment SET ' + fields + ' WHERE recruitment_id = ' + recruitment.recruitment_id + ' AND deleted = 0 ';
+        connection.query(sql, (err, result) => {                
+            if(err) reject(err);
+            if(result && result.affectedRows){
+                resolve(true);
+            }else{
+                resolve(false);
+            }
+        });
+    });
+}
 
 module.exports = RecruitmentModel;

@@ -123,10 +123,13 @@ ComcanController.deleteComCanFollowing = (candidateId, companyId, delType) => {
             if(delType == COMPANY_CANDIDATE.CAN_FOLLOW_COM){
                 newType = COMPANY_CANDIDATE.COM_FOLLOW_CAN;
             }else if(delType == COMPANY_CANDIDATE.COM_FOLLOW_CAN){
-                newType == COMPANY_CANDIDATE.CAN_FOLLOW_COM
+                newType = COMPANY_CANDIDATE.CAN_FOLLOW_COM
             }
+        }else if(oldType != delType){
+            // no update
+            newType = oldType
         }
-    
+        console.log("nghia day", oldType, delType, newType)
         return ComcanController.updateComCanFollowing(candidateId, companyId, newType);
     })
     

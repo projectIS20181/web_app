@@ -5,8 +5,8 @@ const COMPANY_CANDIDATE = require('../configs/constant').COMPANY_CANDIDATE;
 var ComcanController = require('../controllers/Comcan.controller');
 
 router.post('/follow_company', function(req, res, next){
-    var candidateId = req.body.candidate_id;
-    var companyId = req.body.company_id;
+    var candidateId = req.body.candidate_id_fk;
+    var companyId = req.body.company_id_fk;
     var newType = req.body.type;
     if(parseInt(newType) != COMPANY_CANDIDATE.CAN_FOLLOW_COM){
         res.json({
@@ -21,8 +21,8 @@ router.post('/follow_company', function(req, res, next){
 });
 
 router.post('/follow_candidate', function(req, res, next){
-    var candidateId = req.body.candidate_id;
-    var companyId = req.body.company_id;
+    var candidateId = req.body.candidate_id_fk;
+    var companyId = req.body.company_id_fk;
     var newType = req.body.type;
 
     if(parseInt(newType) != COMPANY_CANDIDATE.COM_FOLLOW_CAN){
@@ -38,8 +38,8 @@ router.post('/follow_candidate', function(req, res, next){
 });
 
 router.post('/del_following', function(req, res, next){
-    var candidateId = req.body.candidate_id;
-    var companyId = req.body.company_id;
+    var candidateId = req.body.candidate_id_fk;
+    var companyId = req.body.company_id_fk;
     var delType = req.body.type;
     ComcanController.deleteComCanFollowing(candidateId, companyId, delType).then(result => {
         res.json(result);

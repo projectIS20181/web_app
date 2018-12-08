@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const USER_ROLE = require('../configs/constant').USER_ROLE;
 
 var UserController = require('../controllers/User.controller');
 
@@ -47,6 +48,24 @@ router.post('/register_candidate', function(req, res, next) {
     });
 });
 
+router.post('/register_company', function(req, res, next) {
+    var user = req.body.user;
+    var company = req.body.company;
+       
+    UserController.registerCompany(user, company).then(result => {
+        res.json(result);
+    });
+});
+
+router.post('/add_user_company', function(req, res, next) {
+    var user = req.body.user;
+    var company = req.body.company;
+       
+    UserController.registerUserCompany(user, company).then(result => {
+        res.json(result);
+    });
+});
+
 router.post('/signin_candidate', function(req, res, next) {
     var user = {
         email: req.body.email,
@@ -64,7 +83,7 @@ router.post('/signin_company', function(req, res, next) {
         email: req.body.email,
         user_name: req.body.user_name,
         password: req.body.password,
-        role: req.body.role
+        role: USER_ROLE.COMPANY
     }
     UserController.getUserInfo(user).then(result => {
         res.json(result);
@@ -78,6 +97,13 @@ router.post('/update_can_info', function(req, res, next) {
     // res.json(candidate);
     UserController.updateCandidateInfo(candidate, careerInfo).then(result => {
         res.json(result);
+    });
+});
+
+router.post('/update_user_company', function(req, res, next) {
+    let userCompany = req.body;
+    UserController.updateUserCompanyById(userCompany).then(result => {
+        res.json(result)
     });
 });
 

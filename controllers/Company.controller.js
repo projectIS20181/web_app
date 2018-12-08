@@ -46,6 +46,26 @@ CompanyController.getById = (companyId) => {
     }).catch(err => console.log(err));
 }
 
-
+CompanyController.updateCompanyById = (company = {}) => {
+    if(!company.company_id){
+        return {
+            status: 'FAILED',
+            message: 'Company_id must not be NULL!'
+        };
+    }
+    return CompanyModel.updateCompanyById(company).then(result => { 
+        if(!result){
+            return {
+                status: 'FAILED',
+                message: 'Cannot update company table by Company_id'
+            };
+        }else{
+            return {
+                status: 'SUCCESS',
+                message: 'Update successfully!'
+            };
+        }
+    }).catch(err => {console.log(err)});
+}
 
 module.exports = CompanyController;

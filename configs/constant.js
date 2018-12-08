@@ -33,6 +33,7 @@ module.exports.TYPE_CANDIDATE = {
     INTERN: 4
 }
 module.exports.TYPE_POST = {
+    DEFAULT: 0, // Chua duoc phan loai
     POSTING: 1, //dang Dang
     PAUSING: 2, //Tam dung
     EXPIRED: 3, // het han
