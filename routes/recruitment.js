@@ -70,7 +70,7 @@ router.get('/get_by_id/:id', function(req, res, next) {
     let limit = req.query.limit || 10;
     let offset = req.query.offset || 0;
     
-    RecruitmentController.getByCompanyId(id, limit, offset).then(recruitments => {
+    RecruitmentController.getById(id, limit, offset).then(recruitments => {
         res.json(recruitments);
     }).catch(err => {throw err;});
 });
